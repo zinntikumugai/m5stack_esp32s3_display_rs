@@ -21,6 +21,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- \
 
 # Update envs
 ENV PATH=${PATH}:/root/.cargo/bin
+ENV CARGO_BUILD_TARGET_DIR=/tmp/target
 
 # Install extra crates
 RUN ARCH=$($HOME/.cargo/bin/rustup show | grep "Default host" | sed -e 's/.* //') && \
@@ -54,6 +55,7 @@ RUN if [ -n "${GITHUB_TOKEN}" ]; then export GITHUB_TOKEN=${GITHUB_TOKEN}; fi  \
 RUN rustup default esp
 
 RUN cargo install espmonitor
+RUN curl --proto '=https' --tlsv1.2 -LsSf https://github.com/probe-rs/probe-rs/releases/latest/download/probe-rs-tools-installer.sh | sh
 
 
 # Activate ESP environment

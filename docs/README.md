@@ -1,4 +1,4 @@
-# m5stack_template
+# m5stack_esp32s3_display_rs
 
 ## Dev Containers
 This repository offers Dev Containers supports for:

@@ -3,8 +3,12 @@ target = "xtensa-esp32s3-espidf"
 
 [target.xtensa-esp32s3-espidf]
 linker = "ldproxy"
-runner = "espflash flash --monitor"
+# runner = "espflash flash --monitor"
+# runner = "probe-rs run --chip esp32s3 --probe-port /dev/ttyACM0"
 rustflags = [ "--cfg",  "espidf_time64"]
+
+[target.'cfg(any(target_arch = "riscv32", target_arch = "xtensa"))']
+runner = "probe-rs run --chip esp32s3 --probe-port /dev/ttyACM0"
 
 [unstable]
 build-std = ["std", "panic_abort"]

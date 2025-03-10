@@ -18,4 +18,4 @@ case "$1" in
     ;;
 esac
 
-web-flash --chip esp32s3 target/xtensa-esp32s3-espidf/${BUILD_MODE}/m5stack_template
+web-flash --chip esp32s3 /tmp/target/xtensa-esp32s3-espidf/${BUILD_MODE}/m5stack_esp32s3_display_rs
