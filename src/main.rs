@@ -11,15 +11,27 @@ use embedded_graphics::mono_font::MonoTextStyleBuilder;
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics::prelude::*;
 use embedded_graphics::text::{Baseline, Text};
+use esp_backtrace as _;
+use esp_idf_sys::{esp_task_wdt_config_t, esp_task_wdt_deinit, esp_task_wdt_init};
 use mipidsi::interface::SpiInterface;
 use mipidsi::{models, Builder};
-
-use esp_backtrace as _;
 use tinybmp::Bmp;
 
 const IMG_BYTES: &[u8] = include_bytes!("./img.bmp");
 
 fn main() -> ! {
+    // 起動時にウォッチドッグタイマーを無効化
+    unsafe {
+        esp_task_wdt_deinit(); // 既存のTWDTをリセット
+
+        let config = esp_task_wdt_config_t {
+            timeout_ms: 20000,
+            idle_core_mask: 0, // すべてのコアを無効化
+            trigger_panic: false,
+        };
+        esp_task_wdt_init(&config);
+    }
+
     println!("start!");
     let peripherals = Peripherals::take().unwrap();
     let gpios = peripherals.pins;
@@ -52,7 +64,7 @@ fn main() -> ! {
     let device = SpiDeviceDriver::new(driver, Some(cs), &config).unwrap();
 
     // display interface abstraction from SPI and DC
-    let mut buffer = [0u8; 8];
+    let mut buffer = [0u8; 32];
     let di = SpiInterface::new(device, dc, &mut buffer);
 
     let mut display = Builder::new(models::GC9107, di)
