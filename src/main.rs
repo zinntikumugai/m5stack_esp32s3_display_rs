@@ -50,13 +50,11 @@ fn main() -> ! {
     println!("hard reset start");
     rst.set_low().unwrap();
     delay.delay_ms(100);
-    // thread::sleep(Duration::from_millis(100));
     rst.set_high().unwrap();
     delay.delay_ms(2000);
-    // thread::sleep(Duration::from_millis(2000));
 
     // configuring the spi interface
-    let config = config::Config::new().baudrate(10.MHz().into());
+    let config = config::Config::new().baudrate(50.MHz().into());
 
     let driver =
         SpiDriver::new::<SPI2>(spi, sclk, sda, None::<Gpio15>, &SpiDriverConfig::new()).unwrap();
@@ -69,7 +67,6 @@ fn main() -> ! {
 
     let mut display = Builder::new(models::GC9107, di)
         .reset_pin(rst)
-        // .display_size(128, 128)
         .init(&mut delay)
         .unwrap();
 
@@ -80,27 +77,25 @@ fn main() -> ! {
 
     let text_style_a = MonoTextStyleBuilder::new()
         .font(&FONT_6X10)
-        .text_color(Rgb565::WHITE)
+        .text_color(Rgb565::BLUE)
         .build();
     let text_a = Text::with_baseline(
         "Hello World.",
-        Point::new(0, 0),
+        Point::new(0, 32),
         text_style_a,
         Baseline::Top,
     );
 
     let bmp = Bmp::from_slice(IMG_BYTES).unwrap();
-    let img = Image::new(&bmp, Point::new(0, 0));
+    let img = Image::new(&bmp, Point::new(0, 32));
     println!("setup2!");
 
     // draw image on black background
     display.clear(Rgb565::GREEN).unwrap();
 
-    let r = text_a.draw(&mut display);
-    println!("text r: {:?}", r);
+    img.draw(&mut display).unwrap();
 
-    let r = img.draw(&mut display);
-    println!("img r: {:?}", r);
+    text_a.draw(&mut display).unwrap();
 
     println!("Image printed!");
 
