@@ -3,7 +3,7 @@
 - m5stack Atom (ESP32S3)
 - Display Draw(text, img)
 
-## isses
+## issues
 
 - オフセットがずれてる
 - offsetできない
