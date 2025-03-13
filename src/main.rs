@@ -14,6 +14,7 @@ use embedded_graphics::text::{Baseline, Text};
 use esp_backtrace as _;
 use esp_idf_sys::{esp_task_wdt_config_t, esp_task_wdt_deinit, esp_task_wdt_init};
 use mipidsi::interface::SpiInterface;
+use mipidsi::options::ColorOrder;
 use mipidsi::{models, Builder};
 use tinybmp::Bmp;
 
@@ -67,6 +68,7 @@ fn main() -> ! {
 
     let mut display = Builder::new(models::GC9107, di)
         .reset_pin(rst)
+        .color_order(ColorOrder::Bgr)
         .init(&mut delay)
         .unwrap();
 
@@ -87,11 +89,11 @@ fn main() -> ! {
     );
 
     let bmp = Bmp::from_slice(IMG_BYTES).unwrap();
-    let img = Image::new(&bmp, Point::new(0, 32));
+    let img = Image::new(&bmp, Point::new(0, 40));
     println!("setup2!");
 
     // draw image on black background
-    display.clear(Rgb565::GREEN).unwrap();
+    display.clear(Rgb565::BLACK).unwrap();
 
     img.draw(&mut display).unwrap();
 
